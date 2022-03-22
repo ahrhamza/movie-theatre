@@ -36,14 +36,19 @@ public class MovieDB {
     public MovieDB() {
     }
 
-    public String getTop10() {
-        String uri = "https://api.themoviedb.org/3/discover/movie?api_key=" + MovieDB.KEY + "&language=en-US&sort_by=popularity.desc&include_adult=false";
+    private ResponseEntity<?> getResponseBody(String uri) {
         RestTemplate restTemplate = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
         ResponseEntity<?> result =
                 restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        return result;
+    }
+
+    public String getTop10() {
+        String uri = "https://api.themoviedb.org/3/discover/movie?api_key=" + MovieDB.KEY + "&language=en-US&sort_by=popularity.desc&include_adult=false";
+        ResponseEntity<?> result = getResponseBody(uri);
         //return result.getBody().toString();
 
         JSONObject resultsJson = new JSONObject(result.getBody().toString());
@@ -63,22 +68,27 @@ public class MovieDB {
             top10movies.add(m);
         }
 
-        return top10movies.get(0).getTitle();
+        JSONArray jsonArray = new JSONArray(top10movies);
+        return jsonArray.toString();
+        //return top10movies.get(0).getPosterPath();
 
     }
 
-    public String getMovieDetails(String query) throws UnsupportedEncodingException {
+    public String searchForMovie(String query) throws UnsupportedEncodingException {
         String uri = "https://api.themoviedb.org/3/search/movie?api_key=" + MovieDB.KEY +
                     "&language=en-US&query=" + URLEncoder.encode(query, StandardCharsets.UTF_8.toString()) + "&page=1&include_adult=false";
-        RestTemplate restTemplate = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Collections.singletonList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
-        ResponseEntity<?> result =
-                restTemplate.exchange(uri, HttpMethod.GET, entity, String.class);
+        ResponseEntity<?> result = getResponseBody(uri);
 
         return result.getBody().toString();
 
         //return "";
     }
+
+    public String getMovieDetails(String id) {
+        String uri = "https://api.themoviedb.org/3/movie/" + id + "?api_key=" + MovieDB.KEY + "&language=en-US";
+        ResponseEntity<?> result = getResponseBody(uri);
+
+        return result.getBody().toString();
+    }
+
 }

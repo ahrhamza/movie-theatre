@@ -77,6 +77,6 @@ public class Movie {
     }
 
     public void setPosterPath(String posterPath) {
-        this.posterPath = posterPath;
+        this.posterPath = "https://image.tmdb.org/t/p/w500" + posterPath;
     }
 }

@@ -2,8 +2,7 @@ package com.ahmed.movietheatre;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
 
@@ -17,10 +16,22 @@ public class MovietheatreApplication {
 	}
 
 	@GetMapping
-	public String getKey() throws UnsupportedEncodingException {
+	public String getDiscoverPage() throws UnsupportedEncodingException {
 		MovieDB tmp = new MovieDB();
-		//return tmp.getTop10();
-		return tmp.getMovieDetails("turning red");
+		return tmp.getTop10();
+		//return tmp.searchForMovie("turning red");
+
+	}
+
+	@PostMapping("/search")
+	public String searchMovies(@RequestBody String searchQuery) {
+		return searchMovies(searchQuery);
+	}
+
+	@GetMapping("/movie/{id}")
+	public String getMovieDetails(@PathVariable String id) {
+		MovieDB tmp = new MovieDB();
+		return tmp.getMovieDetails(id);
 	}
 
 }
