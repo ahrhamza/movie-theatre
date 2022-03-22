@@ -17,6 +17,9 @@ public class MovieDB {
 
     static String KEY;
 
+    /*
+    Set up the API key for the MovieDB API
+     */
     static {
         BufferedReader br = null;
         try {
@@ -65,7 +68,10 @@ public class MovieDB {
     public String getTop10() {
         String uri = "https://api.themoviedb.org/3/discover/movie?api_key=" + MovieDB.KEY + "&language=en-US&sort_by=popularity.desc&include_adult=false";
         ResponseEntity<?> result = getResponseBody(uri);
-        //return result.getBody().toString();
+
+        if(result.getStatusCodeValue() != 200) {
+            return "{}";
+        }
 
         JSONObject resultsJson = new JSONObject(result.getBody().toString());
         JSONArray top10moviesJSON = resultsJson.getJSONArray("results");
@@ -95,13 +101,19 @@ public class MovieDB {
     Makes a request to GET /search/movie
      */
     public String searchForMovie(String query) throws UnsupportedEncodingException {
+        if(query == null) {
+            return "{}";
+        }
+
         String uri = "https://api.themoviedb.org/3/search/movie?api_key=" + MovieDB.KEY +
                     "&language=en-US&query=" + URLEncoder.encode(query, StandardCharsets.UTF_8.toString()) + "&page=1&include_adult=false";
         ResponseEntity<?> result = getResponseBody(uri);
 
-        return result.getBody().toString();
+        if(result.getStatusCodeValue() != 200) {
+            return "{}";
+        }
 
-        //return "";
+        return result.getBody().toString();
     }
 
     /*
@@ -113,13 +125,20 @@ public class MovieDB {
         String uri = "https://api.themoviedb.org/3/movie/" + id + "?api_key=" + MovieDB.KEY + "&language=en-US";
         ResponseEntity<?> result = getResponseBody(uri);
 
+        if(result.getStatusCodeValue() != 200) {
+            return "{}";
+        }
+
         return result.getBody().toString();
     }
 
-    
+
     public String getGenres() {
         String uri = "https://api.themoviedb.org/3/genre/movie/list?api_key=" + MovieDB.KEY + "&language=en-US";
         ResponseEntity<?> result = getResponseBody(uri);
+        if(result.getStatusCodeValue() != 200) {
+            return "{}";
+        }
         return result.getBody().toString();
     }
 
